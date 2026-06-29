@@ -38,7 +38,19 @@ def update_task(task_id: str, new_task: UpdateTaskSchema):
             task.title = new_task.title
             task.is_completed = new_task.is_completed
 
-        return task
+            return task
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Задача не найдена"
+    )
+
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: str):
+    for task in tasks:
+        if task.id == task_id:
+            tasks.remove(task)
+            return task
+
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Задача не найдена"
