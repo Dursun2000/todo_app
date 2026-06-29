@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel
 from uuid import uuid4
 
@@ -16,6 +16,10 @@ class CreateTaskSchema(BaseModel):
     title: str
     is_completed: bool = False
 
+class UpdateTaskSchema(BaseModel):
+    title: str
+    is_completed: bool
+
 @app.get("/tasks", status_code=status.HTTP_200_OK)
 def get_all_tasks():
     return tasks
@@ -26,6 +30,21 @@ def create_task(task: CreateTaskSchema):
     tasks.append(new_task)
 
     return new_task
+
+@app.patch("/tasks/{task_id}")
+def update_task(task_id: str, new_task: UpdateTaskSchema):
+    for task in tasks:
+        if task.id == task_id:
+            task.title = new_task.title
+            task.is_completed = new_task.is_completed
+
+        return task
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Задача не найдена"
+    )
+
+
 
 if __name__ == '__main__':
     uvicorn.run("main:app", reload=True)
