@@ -4,7 +4,7 @@ env/
 ENV/
 pyenv/
 
-.idea/
+.idea
 .vscode/
 *.iml
 *.iws
